@@ -87,8 +87,13 @@ def weather_fetch(city_name):
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
     complete_url = base_url + "appid=" + api_key + "&q=" + city_name
+
+    print(complete_url) # debugging
+
     response = requests.get(complete_url)
     x = response.json()
+
+    print(x)
 
     if x["cod"] != "404":
         y = x["main"]
@@ -155,9 +160,6 @@ def fertilizer_recommendation():
 
 # render disease prediction input page
 
-
-
-
 # ===============================================================================================
 
 # RENDER PREDICTION PAGES
@@ -177,7 +179,7 @@ def crop_prediction():
         rainfall = float(request.form['rainfall'])
 
         # state = request.form.get("stt")
-        city = request.form.get("city")
+        city = request.form.get("city").strip()
 
         if weather_fetch(city) != None:
             temperature, humidity = weather_fetch(city)
@@ -262,4 +264,4 @@ def disease_prediction():
 
 # ===============================================================================================
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
