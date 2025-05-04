@@ -1,6 +1,6 @@
 # Importing essential libraries and modules
 
-from flask import Flask, render_template, request, Markup
+from flask import Flask, render_template, request, Markup, jsonify
 import numpy as np
 import pandas as pd
 from utils.disease import disease_dic
@@ -71,6 +71,12 @@ crop_recommendation_model_path = 'models/RandomForest.pkl'
 crop_recommendation_model = pickle.load(
     open(crop_recommendation_model_path, 'rb'))
 
+
+# Loading chatbot - crop recommendation model
+
+bot_crop_model_path = 'models/bot_crop_model.pkl'
+bot_crop_model = pickle.load(
+    open(bot_crop_model_path, 'rb'))
 
 # =========================================================================================
 
@@ -164,6 +170,41 @@ def fertilizer_recommendation():
 
 # RENDER PREDICTION PAGES
 
+# render chatbot_crop result page
+
+@app.route('/recommend', methods=['POST'])
+def recommend_crop():
+    data = request.get_json()
+    input_str = data.get('input', '').strip()
+    
+    # Validate input format
+    try:
+        values = [float(x.strip()) for x in input_str.split(',')]
+    except ValueError:
+        return jsonify({'message': 'Input contains non-numeric values. Please enter valid numbers.'}), 400
+
+    if len(values) != 7:
+        return jsonify({'message': 'Exactly 7 comma-separated values are required: N, P, K, temperature, humidity, pH, rainfall.'}), 400
+
+    n, p, k, temp, humidity, ph, rainfall = values
+
+    # Range checks (customize as needed)
+    if not (0 <= n <= 500): return jsonify({'message': 'Nitrogen (N) value out of realistic range (0–500).'}), 400
+    if not (0 <= p <= 500): return jsonify({'message': 'Phosphorus (P) value out of realistic range (0–500).'}), 400
+    if not (0 <= k <= 500): return jsonify({'message': 'Potassium (K) value out of realistic range (0–500).'}), 400
+    if not (0 <= temp <= 60): return jsonify({'message': 'Temperature out of range (0–60°C).'}), 400
+    if not (0 <= humidity <= 100): return jsonify({'message': 'Humidity should be between 0–100%.'}), 400
+    if not (0 <= ph <= 14): return jsonify({'message': 'pH should be between 0–14.'}), 400
+    if not (0 <= rainfall <= 1000): return jsonify({'message': 'Rainfall should be within 0–1000 mm.'}), 400
+
+    try:
+        prediction = bot_crop_model.predict([values])[0]
+        return jsonify({'message': 'Recommended Crop: {}'.format(prediction)})
+    except Exception as e:
+        return jsonify({'message': 'Model error: {}'.format(str(e))}), 500
+
+
+
 # render crop recommendation result page
 
 
@@ -192,6 +233,8 @@ def crop_prediction():
         else:
 
             return render_template('try_again.html', title=title)
+        
+
 
 # render fertilizer recommendation result page
 
@@ -236,6 +279,7 @@ def fert_recommend():
     response = Markup(str(fertilizer_dic[key]))
 
     return render_template('fertilizer-result.html', recommendation=response, title=title)
+
 
 # render disease prediction result page
 

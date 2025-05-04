@@ -3,7 +3,7 @@
 
 <head>
 	<title>{{ title }}</title>
-	<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+	<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
 
 	<!-- for-mobile-apps -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,10 +35,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		}
 
 		@media (min-width: 1200px) {
-			html {
-				font-size: 2rem;
-			}
-
 			html {
 				font-size: 1rem;
 			}
@@ -92,9 +88,94 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					font-size: 1.6rem;
 				}
 			}
+		}
 
+		#chatbot-toggle {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			background-color: #007BFF;
+			color: white;
+			font-size: 1.5rem;
+			border-radius: 50%;
+			width: 60px;
+			height: 60px;
+			text-align: center;
+			line-height: 60px;
+			cursor: pointer;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			z-index: 9999;
+		}
+
+		#chatbot-container {
+			position: fixed;
+			bottom: 90px;
+			right: 20px;
+			width: 350px;
+			max-height: 500px;
+			z-index: 9999;
+		}
+
+		.chat-container {
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+
+		.chat-box {
+			height: 300px;
+			overflow-y: auto;
+			padding: 15px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.message {
+			margin: 10px 0;
+			padding: 10px 15px;
+			border-radius: 20px;
+			max-width: 75%;
+			word-wrap: break-word;
+		}
+
+		.bot {
+			background: #e0e0e0;
+			align-self: flex-start;
+		}
+
+		.user {
+			background: #007BFF;
+			color: white;
+			align-self: flex-end;
+		}
+
+		.input-box {
+			display: flex;
+			padding: 10px;
+			border-top: 1px solid #ccc;
+		}
+
+		.input-box input {
+			flex: 1;
+			padding: 10px;
+			border-radius: 20px;
+			border: 1px solid #ccc;
+			margin-right: 10px;
+		}
+
+		.input-box button {
+			padding: 10px 15px;
+			border: none;
+			background: #007BFF;
+			color: white;
+			border-radius: 20px;
+			cursor: pointer;
 		}
 	</style>
+
 	<script>
 		addEventListener("load", function () {
 			setTimeout(hideURLbar, 0);
@@ -103,7 +184,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		function hideURLbar() {
 			window.scrollTo(0, 1);
 		}
-
 	</script>
 
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -210,10 +290,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<div class="w3l-copy text-center">
 				<p class="text-da">An Agricultural Intelligence Project<br> </p>
 			</div>
-			<p class="homelogo">
-			<p>Made with ❤️ by a team of final-year Computer Science Engineering students from KVG College of Engineering</p>
-			<p>&copy; Copyright 2025 Team Harvestify</p>
-			
+			<div class="homelogo">
+				<p>Made with ❤️ by a team of final-year Computer Science Engineering students from KVG College of
+					Engineering</p>
+				<p>&copy; Copyright 2025 Team Harvestify</p>
+			</div>
 		</div>
 	</footer>
 	<!-- //footer -->
@@ -221,6 +302,87 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<!-- move top icon -->
 	<a href="#home" class="move-top text-center"></a>
 	<!-- //move top icon -->
+
+	<!-- Floating Chatbot Button -->
+	<div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
+
+	<!-- Chatbot Interface -->
+	<div id="chatbot-container" style="display: none;">
+		<div class="chat-container">
+			<div class="chat-box" id="chat">
+				<!-- Intro Messages -->
+				<div class="message bot">Hi there! I’m AgriBot.</div>
+				<div class="message bot">I can recommend crops based on your local conditions.</div>
+				<div class="message bot">Type <strong>'start'</strong> to begin the recommendation process.</div>
+			</div>
+
+			<form id="chat-form" class="input-box">
+				<input type="text" id="userInput" placeholder="Type your message..." autocomplete="off" />
+				<button type="submit">Send</button>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		function toggleChatbot() {
+			const container = document.getElementById('chatbot-container');
+			container.style.display = (container.style.display === 'none' || container.style.display === '') ? 'block' : 'none';
+		}
+
+		const chatBox = document.getElementById("chat");
+		const userInput = document.getElementById("userInput");
+
+		function addMessage(sender, text) {
+			const msg = document.createElement("div");
+			msg.className = `message ${sender}`;
+			msg.innerText = text;
+			chatBox.appendChild(msg);
+			chatBox.scrollTop = chatBox.scrollHeight;
+		}
+
+		function botReply(text) {
+			addMessage("bot", text);
+		}
+
+		document.getElementById("chat-form").addEventListener("submit", async function (e) {
+			e.preventDefault();
+			const text = userInput.value.trim();
+			if (!text) return;
+
+			addMessage("user", text);
+			userInput.value = "";
+
+			if (/^\d/.test(text)) {
+				try {
+					const response = await fetch("/recommend", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ input: text })
+					});
+
+					const data = await response.json();
+					if (response.ok) {
+						botReply(data.message);
+					} else {
+						botReply(`Input Error: ${data.message}`);
+					}
+				} catch (err) {
+					botReply("Server error: Could not connect to the recommendation API.");
+				}
+			} else {
+				const lower = text.toLowerCase();
+				if (["hi", "hello", "hey"].includes(lower)) {
+					botReply("Hi! To get a crop recommendation, please type your values as: N,P,K,temperature,humidity,pH,rainfall");
+				} else if (lower === "start") {
+					botReply("Please provide your values in the format: N,P,K,temp,humidity,ph,rainfall");
+				} else {
+					botReply("Sorry, I didn't understand that. Please enter valid crop input values or say 'hi'.");
+				}
+			}
+		});
+	</script>
+
+
 </body>
 
 </html>
