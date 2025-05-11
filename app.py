@@ -159,21 +159,21 @@ def load_user(user_id):
 # render home page
 @ app.route('/')
 def home():
-    title = 'Harvestify - Home'
+    title = 'AgriBot - Home'
     return render_template('index.html', title=title)
 
 
 # render crop recommendation form page
 @ app.route('/crop-recommend')
 def crop_recommend():
-    title = 'Harvestify - Crop Recommendation'
+    title = 'AgriBot - Crop Recommendation'
     return render_template('crop.html', title=title)
 
 
 # render fertilizer recommendation form page
 @ app.route('/fertilizer')
 def fertilizer_recommendation():
-    title = 'Harvestify - Fertilizer Suggestion'
+    title = 'AgriBot - Fertilizer Suggestion'
 
     return render_template('fertilizer.html', title=title)
 
@@ -301,7 +301,7 @@ def recommend_crop():
 # render crop recommendation result page
 @ app.route('/crop-predict', methods=['POST'])
 def crop_prediction():
-    title = 'Harvestify - Crop Recommendation'
+    title = 'AgriBot - Crop Recommendation'
 
     if request.method == 'POST':
         N = int(request.form['nitrogen'])
@@ -329,7 +329,7 @@ def crop_prediction():
 # render fertilizer recommendation result page
 @ app.route('/fertilizer-predict', methods=['POST'])
 def fert_recommend():
-    title = 'Harvestify - Fertilizer Suggestion'
+    title = 'AgriBot - Fertilizer Suggestion'
 
     crop_name = str(request.form['cropname'])
     N = int(request.form['nitrogen'])
@@ -372,7 +372,7 @@ def fert_recommend():
 # render disease prediction result page
 @app.route('/disease-prediction', methods=['GET', 'POST'])
 def disease_prediction():
-    title = 'Harvestify - Disease Detection'
+    title = 'AgriBot - Disease Detection'
 
     if request.method == 'POST':
         if 'file' not in request.files:
