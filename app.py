@@ -15,7 +15,7 @@ from utils.model import ResNet9
 
 # Authentication and database
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, LoginManager, login_required, logout_user
+from flask_login import UserMixin, LoginManager, login_required, logout_user, login_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
@@ -222,6 +222,7 @@ def auth():
     title = 'Harvestify - Home'
     return render_template('auth.html', title=title)
 
+
 # render register page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -242,6 +243,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
+            login_user(user)
             return redirect(url_for('dashboard'))
         else:
             return render_template('login.html', form=form, error="Invalid username or password")
