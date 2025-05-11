@@ -11,171 +11,6 @@
 	<meta name="keywords" content="Agro Harvest Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 
-	<style>
-		html {
-			font-size: 1rem;
-		}
-
-		@media (min-width: 576px) {
-			html {
-				font-size: 1.25rem;
-			}
-		}
-
-		@media (min-width: 768px) {
-			html {
-				font-size: 1.5rem;
-			}
-		}
-
-		@media (min-width: 992px) {
-			html {
-				font-size: 1.75rem;
-			}
-		}
-
-		@media (min-width: 1200px) {
-			html {
-				font-size: 1rem;
-			}
-
-			h1 {
-				font-size: 1.2rem;
-			}
-
-			h2 {
-				font-size: 1.1rem;
-			}
-
-			@media (min-width: 768px) {
-				html {
-					font-size: 1.1rem;
-				}
-
-				h1 {
-					font-size: 1.3rem;
-				}
-
-				h2 {
-					font-size: 1.2rem;
-				}
-			}
-
-			@media (min-width: 991px) {
-				html {
-					font-size: 1.2rem;
-				}
-
-				h1 {
-					font-size: 1.5rem;
-				}
-
-				h2 {
-					font-size: 1.4rem;
-				}
-			}
-
-			@media (min-width: 1200px) {
-				html {
-					font-size: 1.2rem;
-				}
-
-				h1 {
-					font-size: 1.7rem;
-				}
-
-				h2 {
-					font-size: 1.6rem;
-				}
-			}
-		}
-
-		#chatbot-toggle {
-			position: fixed;
-			bottom: 20px;
-			right: 20px;
-			background-color: #007BFF;
-			color: white;
-			font-size: 1.5rem;
-			border-radius: 50%;
-			width: 60px;
-			height: 60px;
-			text-align: center;
-			line-height: 60px;
-			cursor: pointer;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-			z-index: 9999;
-		}
-
-		#chatbot-container {
-			position: fixed;
-			bottom: 90px;
-			right: 20px;
-			width: 350px;
-			max-height: 500px;
-			z-index: 9999;
-		}
-
-		.chat-container {
-			background: white;
-			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-			display: flex;
-			flex-direction: column;
-			height: 100%;
-		}
-
-		.chat-box {
-			height: 300px;
-			overflow-y: auto;
-			padding: 15px;
-			display: flex;
-			flex-direction: column;
-		}
-
-		.message {
-			margin: 10px 0;
-			padding: 10px 15px;
-			border-radius: 20px;
-			max-width: 75%;
-			word-wrap: break-word;
-		}
-
-		.bot {
-			background: #e0e0e0;
-			align-self: flex-start;
-		}
-
-		.user {
-			background: #007BFF;
-			color: white;
-			align-self: flex-end;
-		}
-
-		.input-box {
-			display: flex;
-			padding: 10px;
-			border-top: 1px solid #ccc;
-		}
-
-		.input-box input {
-			flex: 1;
-			padding: 10px;
-			border-radius: 20px;
-			border: 1px solid #ccc;
-			margin-right: 10px;
-		}
-
-		.input-box button {
-			padding: 10px 15px;
-			border: none;
-			background: #007BFF;
-			color: white;
-			border-radius: 20px;
-			cursor: pointer;
-		}
-	</style>
-
 	<script>
 		addEventListener("load", function () {
 			setTimeout(hideURLbar, 0);
@@ -202,9 +37,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
 		crossorigin="anonymous"></script>
 	</body>
+
 	<!-- css files -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link href="{{ url_for('static', filename='css/chatbot.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel='stylesheet' type='text/css' />
 	<!-- bootstrap css -->
 	<link href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css' />
@@ -266,8 +103,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</nav>
 
 
-
-
 	{% block body %} {% endblock %}
 
 	<!-- footer -->
@@ -284,7 +119,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<div class="contact-left-footer mt-4">
 				<!-- <a href="community.html">Community</a> -->
 			</div>
-			
 			<div class="w3l-copy text-center">
 				<p class="text-da">An Agricultural Intelligence Project<br> </p>
 			</div>
@@ -302,7 +136,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<!-- //move top icon -->
 
 	<!-- Floating Chatbot Button -->
-	<div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
+	<div id="chatbot-toggle" onclick="toggleChatbot()">
+		<img src="/static/images/chatbot.png" alt="Chatbot" style="width: 40px; height: 40px;">
+	</div>
 
 	<!-- Chatbot Interface -->
 	<div id="chatbot-container" style="display: none;">
@@ -321,65 +157,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		</div>
 	</div>
 
-	<script>
-		function toggleChatbot() {
-			const container = document.getElementById('chatbot-container');
-			container.style.display = (container.style.display === 'none' || container.style.display === '') ? 'block' : 'none';
-		}
-
-		const chatBox = document.getElementById("chat");
-		const userInput = document.getElementById("userInput");
-
-		function addMessage(sender, text) {
-			const msg = document.createElement("div");
-			msg.className = `message ${sender}`;
-			msg.innerText = text;
-			chatBox.appendChild(msg);
-			chatBox.scrollTop = chatBox.scrollHeight;
-		}
-
-		function botReply(text) {
-			addMessage("bot", text);
-		}
-
-		document.getElementById("chat-form").addEventListener("submit", async function (e) {
-			e.preventDefault();
-			const text = userInput.value.trim();
-			if (!text) return;
-
-			addMessage("user", text);
-			userInput.value = "";
-
-			if (/^\d/.test(text)) {
-				try {
-					const response = await fetch("/recommend", {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ input: text })
-					});
-
-					const data = await response.json();
-					if (response.ok) {
-						botReply(data.message);
-					} else {
-						botReply(`Input Error: ${data.message}`);
-					}
-				} catch (err) {
-					botReply("Server error: Could not connect to the recommendation API.");
-				}
-			} else {
-				const lower = text.toLowerCase();
-				if (["hi", "hello", "hey"].includes(lower)) {
-					botReply("Hi! To get a crop recommendation, please type your values as: N,P,K,temperature,humidity,pH,rainfall");
-				} else if (lower === "start") {
-					botReply("Please provide your values in the format: N,P,K,temp,humidity,ph,rainfall");
-				} else {
-					botReply("Sorry, I didn't understand that. Please enter valid crop input values or say 'hi'.");
-				}
-			}
-		});
-	</script>
-
+	<script src="/static/scripts/chatbot.js"></script>
 
 </body>
 

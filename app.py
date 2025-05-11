@@ -177,6 +177,12 @@ def fertilizer_recommendation():
 
     return render_template('fertilizer.html', title=title)
 
+
+# render get_started page
+@app.route('/get_started')
+def get_started():
+    return render_template('auth.html')
+
 # render disease prediction input page
 
 
@@ -210,22 +216,19 @@ class LoginForm(FlaskForm):
 # ============================================================================================================================
 # ----------------------AUTHENTICATION Functions------------------------------------------------------------------------------
 
-# render get_started page
-@app.route('/get_started')
-def get_started():
-    return render_template('auth.html')
 
 
 # render auth page
 @ app.route('/auth')
 def auth():
-    title = 'Harvestify - Home'
+    title = 'AgriBot - Get Started'
     return render_template('auth.html', title=title)
 
 
 # render register page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    title = 'AgriBot - Register'
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
@@ -233,12 +236,13 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, title=title)
 
 
 # render login page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    title = 'AgriBot - Login'
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -247,14 +251,15 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             return render_template('login.html', form=form, error="Invalid username or password")
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, title=title)
 
 
 # render dashboard page
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    title = 'AgriBot - Dashboard'
+    return render_template('dashboard.html', title=title)
 
 # render logout page
 @app.route('/logout', methods=['GET', 'POST'])
