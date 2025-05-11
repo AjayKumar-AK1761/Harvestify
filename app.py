@@ -1,5 +1,5 @@
 # Basic
-from flask import Flask, render_template, Markup, request, jsonify,  redirect, url_for
+from flask import Flask, render_template, Markup, request, jsonify,  redirect, url_for, session,  make_response
 import numpy as np
 import pandas as pd
 from utils.disease import disease_dic
@@ -165,16 +165,23 @@ def home():
 
 # render crop recommendation form page
 @ app.route('/crop-recommend')
+@login_required
 def crop_recommend():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     title = 'AgriBot - Crop Recommendation'
     return render_template('crop.html', title=title)
 
 
 # render fertilizer recommendation form page
 @ app.route('/fertilizer')
+@login_required
 def fertilizer_recommendation():
-    title = 'AgriBot - Fertilizer Suggestion'
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
 
+    title = 'AgriBot - Fertilizer Suggestion'
     return render_template('fertilizer.html', title=title)
 
 
@@ -217,7 +224,6 @@ class LoginForm(FlaskForm):
 # ----------------------AUTHENTICATION Functions------------------------------------------------------------------------------
 
 
-
 # render auth page
 @ app.route('/auth')
 def auth():
@@ -243,30 +249,52 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     title = 'AgriBot - Login'
+    
+    if current_user.is_authenticated:  
+        return redirect(url_for('dashboard'))
+    
     form = LoginForm()
+    just_logged_out = session.pop('just_logged_out', False)
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             return redirect(url_for('dashboard'))
         else:
-            return render_template('login.html', form=form, error="Invalid username or password")
-    return render_template('login.html', form=form, title=title)
+            return render_template('login.html', form=form, error="Invalid username or password", just_logged_out=just_logged_out)
+
+    return render_template('login.html', form=form, title=title, just_logged_out=just_logged_out)
 
 
 # render dashboard page
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
+
 def dashboard():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     title = 'AgriBot - Dashboard'
     return render_template('dashboard.html', title=title)
+
+
 
 # render logout page
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
+    session.pop('just_logged_out', None) 
+
+    response = make_response(redirect(url_for('login')))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
     return redirect(url_for('login'))
+
 
 
 # ==========================================================================================================================
@@ -378,7 +406,11 @@ def fert_recommend():
 
 # render disease prediction result page
 @app.route('/disease-prediction', methods=['GET', 'POST'])
+@login_required
 def disease_prediction():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     title = 'AgriBot - Disease Detection'
 
     if request.method == 'POST':
