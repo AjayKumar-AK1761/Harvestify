@@ -1,0 +1,123 @@
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    background: url('../images/3.jpg') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+/* Frosted glass container for main content */
+.container {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    padding: 30px;
+    width: 100%;
+    max-width: 450px; /* Increased for better spacing */
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: white;
+    text-align: center;
+    animation: fadeIn 1.2s ease-out;
+}
+
+/* Headings styling for form */
+.container h1, .container h2 {
+    margin-bottom: 20px;
+    font-size: 26px; /* Adjust for clarity */
+    font-weight: 600;
+}
+
+/* Link styling for navigation */
+a {
+    color: #00ffd5;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Increased gap for better visual spacing */
+    text-align: left;
+}
+
+/* Aligning the buttons to the center */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Input field styles */
+input[type="text"], input[type="password"] {
+    padding: 12px; /* Increased padding for better touch interaction */
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    transition: background 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+input[type="submit"] {
+    padding: 12px;
+    background: #00ffd5;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%; /* Make the button fill the container width */
+    max-width: 300px; /* Limit the max width for a neat look */
+    margin: 0 auto; /* Center the button */
+}
+
+input[type="submit"]:hover {
+    background: #00c9aa;
+}
+
+/* Error styling for validation messages */
+.error {
+    color: #ff4d4d;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Animations for smooth entry */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

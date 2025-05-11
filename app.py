@@ -1,6 +1,5 @@
-# Importing essential libraries and modules
-
-from flask import Flask, render_template, request, Markup, jsonify
+# Basic
+from flask import Flask, render_template, Markup, request, jsonify,  redirect, url_for
 import numpy as np
 import pandas as pd
 from utils.disease import disease_dic
@@ -13,12 +12,19 @@ import torch
 from torchvision import transforms
 from PIL import Image
 from utils.model import ResNet9
-# ==============================================================================================
 
-# -------------------------LOADING THE TRAINED MODELS -----------------------------------------------
+# Authentication and database
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin, LoginManager, login_required, logout_user
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError
+from werkzeug.security import generate_password_hash, check_password_hash
+
+# =============================================================================================================================
+# -------------------------LOADING THE TRAINED MODELS -------------------------------------------------------------------------
 
 # Loading plant disease classification model
-
 disease_classes = ['Apple___Apple_scab',
                    'Apple___Black_rot',
                    'Apple___Cedar_apple_rust',
@@ -66,22 +72,19 @@ disease_model.eval()
 
 
 # Loading crop recommendation model
-
 crop_recommendation_model_path = 'models/RandomForest.pkl'
 crop_recommendation_model = pickle.load(
     open(crop_recommendation_model_path, 'rb'))
 
 
 # Loading chatbot - crop recommendation model
-
 bot_crop_model_path = 'models/bot_crop_model.pkl'
 bot_crop_model = pickle.load(
     open(bot_crop_model_path, 'rb'))
 
-# =========================================================================================
 
-# Custom functions for calculations
-
+# ============================================================================================================================
+# ----------------------Custom functions for calculations --------------------------------------------------------------------
 
 def weather_fetch(city_name):
     """
@@ -133,31 +136,41 @@ def predict_image(img, model=disease_model):
     # Retrieve the class label
     return prediction
 
-# ===============================================================================================
-# ------------------------------------ FLASK APP -------------------------------------------------
 
+# ===========================================================================================================================
+# ------------------------------------ FLASK APP ----------------------------------------------------------------------------
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'agribot'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
+db = SQLAlchemy(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+# user manager
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 # render home page
-
-
 @ app.route('/')
 def home():
     title = 'Harvestify - Home'
     return render_template('index.html', title=title)
 
+
 # render crop recommendation form page
-
-
 @ app.route('/crop-recommend')
 def crop_recommend():
     title = 'Harvestify - Crop Recommendation'
     return render_template('crop.html', title=title)
 
+
 # render fertilizer recommendation form page
-
-
 @ app.route('/fertilizer')
 def fertilizer_recommendation():
     title = 'Harvestify - Fertilizer Suggestion'
@@ -166,12 +179,93 @@ def fertilizer_recommendation():
 
 # render disease prediction input page
 
-# ===============================================================================================
 
-# RENDER PREDICTION PAGES
+# =============================================================================================================================
+# -------------------------AUTHENTICATION Classes-----------------------------------------------------------------------------
+
+# Define User model
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(100), nullable=False)
+
+# Define Registration Form
+class RegisterForm(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+    submit = SubmitField("Register")
+
+    def validate_username(self, username):
+        existing_user = User.query.filter_by(username=username.data).first()
+        if existing_user:
+            raise ValidationError("That username already exists. Please choose a different one.")
+
+# Login Form
+class LoginForm(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+    submit = SubmitField("Login")
+
+
+# ============================================================================================================================
+# ----------------------AUTHENTICATION Functions------------------------------------------------------------------------------
+
+# render get_started page
+@app.route('/get_started')
+def get_started():
+    return render_template('auth.html')
+
+
+# render auth page
+@ app.route('/auth')
+def auth():
+    title = 'Harvestify - Home'
+    return render_template('auth.html', title=title)
+
+# render register page
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        new_user = User(username=form.username.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('register.html', form=form)
+
+
+# render login page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('login.html', form=form, error="Invalid username or password")
+    return render_template('login.html', form=form)
+
+
+# render dashboard page
+@app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
+# render logout page
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+# ==========================================================================================================================
+# -------------------------RENDER PREDICTION PAGES -------------------------------------------------------------------------
 
 # render chatbot_crop result page
-
 @app.route('/recommend', methods=['POST'])
 def recommend_crop():
     data = request.get_json()
@@ -204,10 +298,7 @@ def recommend_crop():
         return jsonify({'message': 'Model error: {}'.format(str(e))}), 500
 
 
-
 # render crop recommendation result page
-
-
 @ app.route('/crop-predict', methods=['POST'])
 def crop_prediction():
     title = 'Harvestify - Crop Recommendation'
@@ -235,10 +326,7 @@ def crop_prediction():
             return render_template('try_again.html', title=title)
         
 
-
 # render fertilizer recommendation result page
-
-
 @ app.route('/fertilizer-predict', methods=['POST'])
 def fert_recommend():
     title = 'Harvestify - Fertilizer Suggestion'
@@ -282,9 +370,7 @@ def fert_recommend():
 
 
 # render disease prediction result page
-
-
-@app.route('/disease-predict', methods=['GET', 'POST'])
+@app.route('/disease-prediction', methods=['GET', 'POST'])
 def disease_prediction():
     title = 'Harvestify - Disease Detection'
 
@@ -306,6 +392,10 @@ def disease_prediction():
     return render_template('disease.html', title=title)
 
 
-# ===============================================================================================
+# ==========================================================================================================================
+# -------------------------START APPLICATION -------------------------------------------------------------------------------
+
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
