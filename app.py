@@ -5,7 +5,7 @@ import pandas as pd
 from utils.disease import disease_dic
 from utils.fertilizer import fertilizer_dic
 import requests
-import config
+import config, m_service
 import pickle
 import io
 import torch
@@ -435,6 +435,8 @@ def disease_prediction():
 # -------------------------START APPLICATION -------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+    m_service.launch()
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+     

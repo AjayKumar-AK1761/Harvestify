@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Client</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f4f4f4 100%);
+        }
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: #fff;
+            padding: 36px 32px 28px 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(60,60,120,0.15), 0 1.5px 4px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            color: #2d3a4a;
+            letter-spacing: 1px;
+        }
+        form {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 14px;
+            border-radius: 6px;
+            border: 1.5px solid #bfc9d9;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        input[type="text"]:focus {
+            border: 1.5px solid #5b7fff;
+            background: #f0f4ff;
+        }
+        button {
+            padding: 12px 22px;
+            border: none;
+            background: linear-gradient(90deg, #5b7fff 60%, #3a5ad9 100%);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(91,127,255,0.08);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        button:hover, button:focus {
+            background: linear-gradient(90deg, #3a5ad9 60%, #5b7fff 100%);
+            box-shadow: 0 4px 16px rgba(91,127,255,0.13);
+        }
+        .response {
+            margin-top: 28px;
+            padding: 18px 14px;
+            background: #f6f8fa;
+            border-radius: 8px;
+            min-height: 48px;
+            font-size: 1.08rem;
+            color: #2d3a4a;
+            box-shadow: 0 1px 3px rgba(60,60,120,0.04);
+            word-break: break-word;
+        }
+        @media (max-width: 600px) {
+            .container {
+                max-width: 98vw;
+                padding: 18px 6vw 16px 6vw;
+            }
+            .response {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Chatbot</h2>
+        <form id="chat-form" autocomplete="off">
+            <input type="text" id="question" placeholder="Type your question..." required autofocus />
+            <button type="submit">Ask</button>
+        </form>
+        <div class="response" id="response"></div>
+    </div>
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const question = document.getElementById('question').value;
+            const responseDiv = document.getElementById('response');
+            responseDiv.textContent = 'Thinking...';
+            try {
+                const res = await fetch('http://127.0.0.1:5001/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+                const data = await res.json();
+                if (data.answer) {
+                    responseDiv.textContent = data.answer;
+                } else if (data.error) {
+                    responseDiv.textContent = 'Error: ' + data.error;
+                } else {
+                    responseDiv.textContent = 'Unexpected response.';
+                }
+            } catch (err) {
+                responseDiv.textContent = 'Failed to connect to server.';
+            }
+        });
+    </script>
+</body>
+</html> 

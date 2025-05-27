@@ -1,0 +1,5 @@
+waitress
+flask>=2.0.1
+scikit-learn>=0.24.2
+numpy>=1.21.0 
+flask_cors
