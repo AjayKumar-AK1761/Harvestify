@@ -415,19 +415,24 @@ def disease_prediction():
 
     if request.method == 'POST':
         if 'file' not in request.files:
-            return redirect(request.url)
+            error = 'No file part in the request.'
+            return render_template('disease.html', title=title, error=error)
         file = request.files.get('file')
-        if not file:
-            return render_template('disease.html', title=title)
+        if not file or file.filename == '':
+            error = 'No file selected.'
+            return render_template('disease.html', title=title, error=error)
         try:
             img = file.read()
+            if not img:
+                error = 'Uploaded file is empty.'
+                return render_template('disease.html', title=title, error=error)
 
             prediction = predict_image(img)
-
             prediction = Markup(str(disease_dic[prediction]))
             return render_template('disease-result.html', prediction=prediction, title=title)
-        except:
-            pass
+        except Exception as e:
+            error = 'Error processing image. Please upload a valid image file.'
+            return render_template('disease.html', title=title, error=error)
     return render_template('disease.html', title=title)
 
 

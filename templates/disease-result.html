@@ -1,14 +1,16 @@
-
-{% extends 'layout.html' %} {% block body %}
-
-
-<div class="container py-2 mx-auto my-50 h-10 " style="margin: 9rem;">
-  <div class="row">
-      <div class="col-sm py-2 py-md-3">
-          <div class="card card-body" style="justify-content: center; background-color:blanchedalmond">
-            <p class="text-center" style="color: black; font-size: 22px;">{{ prediction }}</p>
-          </div>
-      </div>
+{% extends 'layout.html' %}
+{% block body %}
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="card shadow-lg p-4" style="max-width: 500px; width: 100%;">
+    <div class="text-center mb-4">
+      <img src="{{ url_for('static', filename='images/disease.png') }}" alt="Disease" style="width: 60px; border-radius: 8px;">
+      <h2 class="mt-2 mb-0 text-danger">Disease Prediction</h2>
+    </div>
+    <div class="text-center">
+      <h4 class="mb-4">{{ prediction|safe }}</h4>
+      <a href="{{ url_for('disease_prediction') }}" class="btn btn-outline-primary mt-2">Try Another</a>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-link mt-2">Back to Dashboard</a>
+    </div>
   </div>
 </div>
 {% endblock %}

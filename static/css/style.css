@@ -382,9 +382,61 @@ li > a:only-child:after { content: ''; }
     position: relative;
     z-index: 1;
 }
+.banner-top {
+  position: relative;
+  width: 100%;
+  height: 770px;
+  overflow: hidden;
+}
+
+.slideshow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  animation: fade 12s infinite;
+}
+
+.slide1 {
+  background-image: url('{{ url_for("static", filename="images/crop_background.jpg") }}');
+  animation-delay: 0s;
+}
+
+.slide2 {
+  background-image: url('{{ url_for("static", filename="images/farm.jpg") }}');
+  animation-delay: 4s;
+}
+
+.slide3 {
+  background-image: url('{{ url_for("static", filename="images/farm_background.jpg") }}');
+  animation-delay: 8s;
+}
+
+@keyframes fade {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  30% { opacity: 1; }
+  38% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.overlay {
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.4); /* Optional overlay tint */
+}
 
 .banner-top {
-    background: url(../images/farm.jpg) no-repeat center;
+    background: url(../images/crop_background.jpg) no-repeat center;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -1636,3 +1688,36 @@ a.move-top {
 }
 
 /*-- //Responsive design --*/
+
+/*-- //Products & Services --*/
+
+.service-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.service-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Frozen Glass Effect for Cards */
+.frozen-glass-card {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 10px; /* Assuming you want rounded corners */
+}
+
+/* Creating custom grid and hover effect
+<section>
+<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+    <div class="hovereffect">
+        <img class="img-responsive" src="images/s2.jpg" alt="">
+        <div class="overlay">
+           <h2>Hover effect 1</h2>
+           <a 	class="info" href="#">link here</a>
+        </div>
+    </div>
+</div> -->
