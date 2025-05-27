@@ -1,9 +1,14 @@
+@import url('./_variables.css');
+
+/* =============================
+   Global Styles (Refactored)
+   ============================= */
 html,
 body {
     margin: 0;
     font-size: 100%;
-    background: #fff;
-	font-family: 'Thasadith', sans-serif;
+    background: var(--background);
+    font-family: var(--font-main);
 }
 
 html {
@@ -12,19 +17,18 @@ html {
 body a {
     text-decoration: none;
     transition: 0.5s all;
-    -webkit-transition: 0.5s all;
-    -moz-transition: 0.5s all;
-    -o-transition: 0.5s all;
-    -ms-transition: 0.5s all;
-	font-family: 'Thasadith', sans-serif;
+    font-family: var(--font-main);
+    color: var(--primary);
 }
 
 body img {
     max-width: 100%;
 }
 
-a:hover {
-    text-decoration: none;
+a:hover, a:focus {
+    text-decoration: underline;
+    color: var(--primary-dark);
+    outline: none;
 }
 
 input[type="button"],
@@ -33,10 +37,17 @@ input[type="text"],
 input[type="email"],
 input[type="search"] {
     transition: 0.5s all;
-    -webkit-transition: 0.5s all;
-    -moz-transition: 0.5s all;
-    -o-transition: 0.5s all;
-    -ms-transition: 0.5s all;
+    font-family: var(--font-main);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 1rem;
+}
+
+input[type="button"]:hover, input[type="submit"]:hover, input[type="button"]:focus, input[type="submit"]:focus {
+    background: var(--primary);
+    color: var(--text-light);
+    outline: 2px solid var(--primary-dark);
 }
 
 h1,
@@ -46,7 +57,8 @@ h4,
 h5,
 h6 {
     margin: 0;
-	color: #323648;
+    color: var(--text);
+    font-family: var(--font-main);
 }
 li {
     list-style-type: none;
@@ -54,16 +66,16 @@ li {
 
 p {
     margin: 0;
-    font-size: 17px;
+    font-size: 1.06rem;
     line-height: 2em;
     letter-spacing: 2px;
     color: #707579;
     font-weight: 600;
-}
-
+	
 ul {
     margin: 0;
     padding: 0;
+}
 }
 
 
