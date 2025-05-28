@@ -1,123 +1,117 @@
-/* Base styles */
+@import url('./_variables.css');
+
+/* =============================
+   Frosted Glass Form Styles
+   ============================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-main);
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', sans-serif;
     min-height: 100vh;
     background: url('../images/crop_background.jpg') no-repeat center center/cover;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: var(--space-md);
     backdrop-filter: blur(1.5px);
 }
 
-/* Frosted glass container for main content */
 .container {
     background: rgba(0, 0, 0, 0.4);
-    border-radius: 16px;
-    padding: 30px;
+    border-radius: var(--radius);
+    padding: var(--space-lg);
     width: 100%;
-    max-width: 450px; /* Increased for better spacing */
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    max-width: 450px;
+    box-shadow: var(--shadow);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.18);
-    color: white;
+    color: var(--text-light);
     text-align: center;
     animation: fadeIn 1.2s ease-out;
 }
 
-/* Headings styling for form */
 .container h1, .container h2 {
-    margin-bottom: 20px;
-    font-size: 26px; /* Adjust for clarity */
+    margin-bottom: var(--space-md);
+    font-size: 1.6rem;
     font-weight: 600;
 }
 
-/* Link styling for navigation */
 a {
-    color: #00ffd5;
+    color: var(--accent);
     text-decoration: none;
     font-weight: 600;
 }
-
-a:hover {
+a:hover, a:focus {
     text-decoration: underline;
+    color: var(--primary);
+    outline: none;
 }
 
-/* Form styling */
 form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Increased gap for better visual spacing */
+    gap: var(--space-lg);
     text-align: left;
 }
 
-/* Aligning the buttons to the center */
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-sm);
 }
 
-/* Input field styles */
 input[type="text"], input[type="password"] {
-    padding: 12px; /* Increased padding for better touch interaction */
+    padding: var(--space-md);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius);
     outline: none;
-    font-size: 16px;
+    font-size: 1rem;
     background: rgba(0, 0, 0, 0.5);
-    color: white;
-    transition: background 0.3s ease;
+    color: var(--text-light);
+    transition: background 0.3s, border 0.2s;
 }
-
 input[type="text"]:focus, input[type="password"]:focus {
     background: rgba(255, 255, 255, 0.3);
+    border: 1.5px solid var(--primary);
 }
 
 input[type="submit"] {
-    padding: 12px;
-    background: #00ffd5;
+    padding: var(--space-md);
+    background: var(--accent);
     color: #000;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius);
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s ease;
-    width: 100%; /* Make the button fill the container width */
-    max-width: 300px; /* Limit the max width for a neat look */
-    margin: 0 auto; /* Center the button */
+    transition: background 0.3s;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+input[type="submit"]:hover, input[type="submit"]:focus {
+    background: var(--primary);
+    color: var(--text-light);
+    outline: 2px solid var(--primary-dark);
 }
 
-input[type="submit"]:hover {
-    background: #00c9aa;
-}
-
-/* Error styling for validation messages */
 .error {
-    color: #ff4d4d;
-    margin-bottom: 10px;
-    font-size: 14px;
+    color: var(--danger);
+    margin-bottom: var(--space-sm);
+    font-size: 0.95rem;
     font-weight: bold;
 }
 
-/* Animations for smooth entry */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 500px) {
+    .container { padding: var(--space-md); max-width: 98vw; }
+    .container h1, .container h2 { font-size: 1.2rem; }
 }

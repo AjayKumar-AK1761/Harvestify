@@ -1,0 +1,33 @@
+/* =============================
+   Global CSS Variables
+   ============================= */
+:root {
+  /* Color Palette */
+  --primary: #007bff;
+  --primary-dark: #0056b3;
+  --secondary: #b844d2;
+  --secondary-light: #e0e0e0;
+  --accent: #00ffd5;
+  --danger: #ff4d4d;
+  --background: #fff;
+  --background-dark: #222;
+  --surface: #fff;
+  --surface-dark: #333;
+  --text: #222;
+  --text-light: #fff;
+  --border: #ccc;
+  --shadow: 0 4px 16px rgba(0,0,0,0.12);
+
+  /* Font */
+  --font-main: 'Segoe UI', 'Thasadith', Arial, sans-serif;
+  --font-size-base: 16px;
+  --font-size-lg: 1.25rem;
+  --font-size-sm: 0.95rem;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 32px;
+  --radius: 12px;
+} 

@@ -31,7 +31,7 @@
 		<h3 class="heading mb-sm-5 mb-4 text-center"> About Us</h3>
 		<div class="row core-grids">
 			<div class="col-lg-6 core-left">
-				<img src="{{ url_for('static', filename='images/core.jpg') }}" class="img-fluid" alt="" />
+				<img src="{{ url_for('static', filename='images/core.jpg') }}" class="img-fluid" alt="About AgriBot" />
 			</div>
 			<div class="col-lg-6 core-right" style="text-align: justify;">
 				<h3 class="mt-4">Improving Agriculture, Improving Lives, Cultivating Crops To Make Farmers Increase
@@ -52,34 +52,40 @@
 	<div class="container py-md-5">
 		<h3 class="heading mb-sm-5 mb-4 text-center"> Our Services</h3>
 		<div class="row blog-grids" style="text-align: justify;">
-			<div class="col-lg-4 col-md-6 blog-left mb-lg-0 mb-sm-5 pb-lg-0 pb-5">
-				<img src="{{ url_for('static', filename='images/s3.jpg') }}" class="img-fluid" alt="" />
-				<div class="blog-info">
-                    <a class="nav-link" href="{{ url_for('crop_recommend') }}">
-                        <h4>Crop</h4>
-                    </a>
-					<p class="mt-2"> Recommendation about the type of crops to be cultivated which is best suited
-						for the respective conditions</p>
-				</div>				
+			<div class="col-lg-4 col-md-6 blog-left mb-4">
+				<div class="card h-100 shadow border-0 service-card">
+					<img src="{{ url_for('static', filename='images/s3.jpg') }}" class="card-img-top" alt="Crop Recommendation" loading="lazy" />
+					<div class="card-body">
+						<a class="nav-link" href="{{ url_for('crop_recommend') }}">
+							<h4>Crop</h4>
+						</a>
+						<p class="mt-2"> Recommendation about the type of crops to be cultivated which is best suited
+							for the respective conditions</p>
+					</div>				
+				</div>
 			</div>
-			<div class="col-lg-4 col-md-6 blog-middle mb-lg-0 mb-sm-5 pb-lg-0 pb-md-5">
-				<img src="{{ url_for('static', filename='images/s2.jpg') }}" class="img-fluid" alt="" />
-				<div class="blog-info">
-                    <a class="nav-link" href="{{ url_for('fertilizer_recommendation') }}">
-					    <h4>Fertilizer</h4>
-                    </a>
-					<p class="mt-2">Recommendation about the type of fertilizer best suited for the particular soil
-						and the recommended crop</p>
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow border-0 service-card">
+					<img src="{{ url_for('static', filename='images/s2.jpg') }}" class="card-img-top" alt="Fertilizer Recommendation" loading="lazy" />
+					<div class="card-body">
+						<a class="nav-link" href="{{ url_for('fertilizer_recommendation') }}">
+							<h4>Fertilizer</h4>
+						</a>
+						<p class="mt-2">Recommendation about the type of fertilizer best suited for the particular soil
+							and the recommended crop</p>
+					</div>
 				</div>
 			</div>
 			
-			<div class="col-lg-4 col-md-6 blog-right mt-lg-0 mt-5 pt-lg-0 pt-md-5">
-				<img src="{{ url_for('static', filename='images/s4.jpg') }}" class="img-fluid" alt="">
-				<div class="blog-info">
-					<a class="nav-link" href="{{ url_for('disease_prediction') }}">
-					    <h4>Crop Disease</h4>
-                    </a>
-					<p class="mt-2">Predicting the name and causes of crop disease and suggestions to cure it</p>
+			<div class="col-lg-4 col-md-6 mb-4">
+				<div class="card h-100 shadow border-0 service-card">
+					<img src="{{ url_for('static', filename='images/s4.jpg') }}" class="card-img-top" alt="Crop Disease Prediction" loading="lazy" />
+					<div class="card-body">
+						<a class="nav-link" href="{{ url_for('disease_prediction') }}">
+							<h4>Crop Disease</h4>
+						</a>
+						<p class="mt-2">Predicting the name and causes of crop disease and suggestions to cure it</p>
+					</div>
 				</div>
 			</div>
 		</div>

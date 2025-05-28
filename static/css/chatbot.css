@@ -1,162 +1,142 @@
+@import url('./_variables.css');
+
+/* =============================
+   Chatbot Widget Styles
+   ============================= */
 html {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
+    font-family: var(--font-main);
+    background: var(--background);
 }
 
 @media (min-width: 576px) {
-    html {
-        font-size: 1.25rem;
-    }
+    html { font-size: 1.1rem; }
 }
-
 @media (min-width: 768px) {
-    html {
-        font-size: 1.5rem;
-    }
+    html { font-size: 1.2rem; }
 }
-
 @media (min-width: 992px) {
-    html {
-        font-size: 1.75rem;
-    }
+    html { font-size: 1.3rem; }
 }
-
 @media (min-width: 1200px) {
-    html {
-        font-size: 1rem;
-    }
-
-    h1 {
-        font-size: 1.2rem;
-    }
-
-    h2 {
-        font-size: 1.1rem;
-    }
-
-    @media (min-width: 768px) {
-        html {
-            font-size: 1.1rem;
-        }
-
-        h1 {
-            font-size: 1.3rem;
-        }
-
-        h2 {
-            font-size: 1.2rem;
-        }
-    }
-
-    @media (min-width: 991px) {
-        html {
-            font-size: 1.2rem;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-        }
-
-        h2 {
-            font-size: 1.4rem;
-        }
-    }
-
-    @media (min-width: 1200px) {
-        html {
-            font-size: 1.2rem;
-        }
-
-        h1 {
-            font-size: 1.7rem;
-        }
-
-        h2 {
-            font-size: 1.6rem;
-        }
-    }
+    html { font-size: 1.4rem; }
 }
 
 #chatbot-toggle {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color:rgba(184, 68, 210, 0.8);
-    color: white;
-    font-size: 1.5rem;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    background: var(--secondary);
+    color: var(--text-light);
+    font-size: 2rem;
     border-radius: 50%;
     width: 70px;
     height: 70px;
     text-align: center;
-    line-height: 60px;
+    line-height: 70px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow);
     z-index: 9999;
+    border: none;
+    transition: background 0.2s;
+}
+#chatbot-toggle:focus, #chatbot-toggle:hover {
+    background: var(--primary);
+    outline: 2px solid var(--primary-dark);
 }
 
 #chatbot-container {
     position: fixed;
     bottom: 90px;
-    right: 20px;
+    right: var(--space-lg);
     width: 350px;
+    max-width: 95vw;
     max-height: 500px;
     z-index: 9999;
 }
 
 .chat-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
 }
 
 .chat-box {
     height: 300px;
     overflow-y: auto;
-    padding: 15px;
+    padding: var(--space-md);
     display: flex;
     flex-direction: column;
+    background: var(--background);
 }
 
 .message {
-    margin: 10px 0;
-    padding: 10px 15px;
+    margin: var(--space-sm) 0;
+    padding: var(--space-sm) var(--space-md);
     border-radius: 20px;
     max-width: 75%;
     word-wrap: break-word;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .bot {
-    background: #e0e0e0;
+    background: var(--secondary-light);
+    color: var(--text);
     align-self: flex-start;
 }
 
 .user {
-    background: #007BFF;
-    color: white;
+    background: var(--primary);
+    color: var(--text-light);
     align-self: flex-end;
 }
 
 .input-box {
     display: flex;
-    padding: 10px;
-    border-top: 1px solid #ccc;
+    padding: var(--space-sm);
+    border-top: 1px solid var(--border);
+    background: var(--surface);
 }
 
 .input-box input {
     flex: 1;
-    padding: 10px;
+    padding: var(--space-sm) var(--space-md);
     border-radius: 20px;
-    border: 1px solid #ccc;
-    margin-right: 10px;
+    border: 1px solid var(--border);
+    margin-right: var(--space-sm);
+    font-size: 1rem;
+    background: var(--background);
+    color: var(--text);
+    transition: border 0.2s, background 0.2s;
+}
+.input-box input:focus {
+    border: 1.5px solid var(--primary);
+    background: #f8faff;
+    outline: none;
 }
 
 .input-box button {
-    padding: 10px 15px;
+    padding: var(--space-sm) var(--space-md);
     border: none;
-    background: #007BFF;
-    color: white;
+    background: var(--primary);
+    color: var(--text-light);
     border-radius: 20px;
     cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.input-box button:focus, .input-box button:hover {
+    background: var(--primary-dark);
+    outline: 2px solid var(--primary);
+}
+
+@media (max-width: 400px) {
+    #chatbot-container { width: 98vw; right: 1vw; }
+    .chat-box { padding: var(--space-xs); }
+    .input-box input, .input-box button { font-size: 0.95rem; }
 }

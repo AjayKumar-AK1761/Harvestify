@@ -1,0 +1,62 @@
+What is AgriBot?
+What is the main goal of AgriBot?
+How does AgriBot help farmers increase profit?
+What services does AgriBot provide?
+What is crop recommendation?
+What is fertilizer recommendation?
+How does AgriBot predict crop diseases?
+How do I find the most suitable crop for my farm?
+What inputs are needed for fertilizer advice?
+How do I check crop diseases with AgriBot?
+Who created AgriBot?
+Is AgriBot a commercial service?
+What diseases affect Apple?
+What diseases affect Cherry?
+What diseases affect Corn?
+What diseases affect Grape?
+What disease affects Orange?
+What disease affects Peach?
+What disease affects Pepper?
+What diseases affect Potato?
+What disease affects Squash?
+What disease affects Strawberry?
+What diseases affect Tomato?
+How many crop diseases can AgriBot detect?
+How many crops are supported in AgriBot?
+What diseases does AgriBot detect?
+How many diseases are there?
+How many crops are there?
+good evening
+How are you?
+thank you
+bye
+What's your name?
+Can you help me?
+What's the weather like?
+Tell me a joke.
+What's the time?
+Nice to meet you
+hi
+hello
+hey
+good morning
+good evening
+bye
+see you
+thanks
+thank you
+help
+sorry
+Who are you?
+How are you?
+What's up?
+Good job
+Keep it up
+You're doing great
+Awesome
+Perfect answer
+You're dumb
+This is wrong
+Useless bot
+You messed up
+Stupid answer 

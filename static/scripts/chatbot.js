@@ -44,13 +44,20 @@ document.getElementById("chat-form").addEventListener("submit", async function (
             botReply("Server error: Could not connect to the recommendation API.");
         }
     } else {
-        const lower = text.toLowerCase();
-        if (["hi", "hello", "hey"].includes(lower)) {
-            botReply("Hi! To get a crop recommendation, please type your values as: N,P,K,temperature,humidity,pH,rainfall");
-        } else if (lower === "start") {
-            botReply("Please provide your values in the format: N,P,K,temp,humidity,ph,rainfall");
-        } else {
-            botReply("Sorry, I didn't understand that. Please enter valid crop input values or say 'hi'.");
+        try {
+            const response = await fetch("http://127.0.0.1:5001/chatbot", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: text })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                botReply(data.answer || data.message || "No answer received from chatbot.");
+            } else {
+                botReply(`Chatbot Error: ${data.message || "Unknown error."}`);
+            }
+        } catch (err) {
+            botReply("Server error: Could not connect to the chatbot API.");
         }
     }
 });
