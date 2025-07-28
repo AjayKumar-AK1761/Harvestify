@@ -1,7 +1,7 @@
 import subprocess
 import os
 
-env_name = "chatbot"
+env_name = "chatbot1"
 python_version = "3.10"
 script_path = os.path.join("chatbot_server", "app.py")
 requirements_path = os.path.join("chatbot_server", "requirements.txt")

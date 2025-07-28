@@ -1,4 +1,454 @@
-# Basic
+# # Basic
+# from flask import Flask, render_template, request, jsonify,  redirect, url_for, session,  make_response
+# import numpy as np
+# import pandas as pd
+# from utils.disease import disease_dic
+# from utils.fertilizer import fertilizer_dic
+# import requests
+# import config, m_service
+# import pickle
+# import io
+# import torch
+# from torchvision import transforms
+# from PIL import Image
+# from utils.model import ResNet9
+
+# # Authentication and database
+# from flask_sqlalchemy import SQLAlchemy
+# from flask_login import  LoginManager, login_required, logout_user, login_user, UserMixin, current_user
+# from flask_wtf import FlaskForm
+# from wtforms import StringField, PasswordField, SubmitField
+# from wtforms.validators import InputRequired, Length, ValidationError
+# from werkzeug.security import generate_password_hash, check_password_hash
+
+# # =============================================================================================================================
+# # ------------------------- LOADING THE TRAINED MODELS -------------------------------------------------------------------------
+
+# # Loading plant disease classification model
+# disease_classes = ['Apple___Apple_scab',
+#                    'Apple___Black_rot',
+#                    'Apple___Cedar_apple_rust',
+#                    'Apple___healthy',
+#                    'Blueberry___healthy',
+#                    'Cherry_(including_sour)___Powdery_mildew',
+#                    'Cherry_(including_sour)___healthy',
+#                    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
+#                    'Corn_(maize)___Common_rust_',
+#                    'Corn_(maize)___Northern_Leaf_Blight',
+#                    'Corn_(maize)___healthy',
+#                    'Grape___Black_rot',
+#                    'Grape___Esca_(Black_Measles)',
+#                    'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)',
+#                    'Grape___healthy',
+#                    'Orange___Haunglongbing_(Citrus_greening)',
+#                    'Peach___Bacterial_spot',
+#                    'Peach___healthy',
+#                    'Pepper,_bell___Bacterial_spot',
+#                    'Pepper,_bell___healthy',
+#                    'Potato___Early_blight',
+#                    'Potato___Late_blight',
+#                    'Potato___healthy',
+#                    'Raspberry___healthy',
+#                    'Soybean___healthy',
+#                    'Squash___Powdery_mildew',
+#                    'Strawberry___Leaf_scorch',
+#                    'Strawberry___healthy',
+#                    'Tomato___Bacterial_spot',
+#                    'Tomato___Early_blight',
+#                    'Tomato___Late_blight',
+#                    'Tomato___Leaf_Mold',
+#                    'Tomato___Septoria_leaf_spot',
+#                    'Tomato___Spider_mites Two-spotted_spider_mite',
+#                    'Tomato___Target_Spot',
+#                    'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
+#                    'Tomato___Tomato_mosaic_virus',
+#                    'Tomato___healthy']
+
+# disease_model_path = 'models/plant_disease_model.pth'
+# disease_model = ResNet9(3, len(disease_classes))
+# disease_model.load_state_dict(torch.load(
+#     disease_model_path, map_location=torch.device('cpu')))
+# disease_model.eval()
+
+
+# # Loading crop recommendation model
+# crop_recommendation_model_path = 'models/RandomForest.pkl'
+# crop_recommendation_model = pickle.load(
+#     open(crop_recommendation_model_path, 'rb'))
+
+
+# # Loading chatbot - crop recommendation model
+# bot_crop_model_path = 'models/bot_crop_model.pkl'
+# bot_crop_model = pickle.load(
+#     open(bot_crop_model_path, 'rb'))
+
+
+# # ============================================================================================================================
+# # ----------------------Custom functions for calculations --------------------------------------------------------------------
+
+# def weather_fetch(city_name):
+#     """
+#     Fetch and returns the temperature and humidity of a city
+#     :params: city_name
+#     :return: temperature, humidity
+#     """
+#     api_key = config.weather_api_key
+#     base_url = "http://api.openweathermap.org/data/2.5/weather?"
+
+#     complete_url = base_url + "appid=" + api_key + "&q=" + city_name
+
+#     print(complete_url) # debugging
+
+#     response = requests.get(complete_url)
+#     x = response.json()
+
+#     print(x)
+
+#     if x["cod"] != "404":
+#         y = x["main"]
+
+#         temperature = round((y["temp"] - 273.15), 2)
+#         humidity = y["humidity"]
+#         return temperature, humidity
+#     else:
+#         return None
+
+
+# def predict_image(img, model=disease_model):
+#     """
+#     Transforms image to tensor and predicts disease label
+#     :params: image
+#     :return: prediction (string)
+#     """
+#     transform = transforms.Compose([
+#         transforms.Resize(256),
+#         transforms.ToTensor(),
+#     ])
+#     image = Image.open(io.BytesIO(img))
+#     img_t = transform(image)
+#     img_u = torch.unsqueeze(img_t, 0)
+
+#     # Get predictions from model
+#     yb = model(img_u)
+#     # Pick index with highest probability
+#     _, preds = torch.max(yb, dim=1)
+#     prediction = disease_classes[preds[0].item()]
+#     # Retrieve the class label
+#     return prediction
+
+
+# # ===========================================================================================================================
+# # ------------------------------------ FLASK APP ----------------------------------------------------------------------------
+
+# app = Flask(__name__)
+# app.config['SECRET_KEY'] = 'agribot'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
+# db = SQLAlchemy(app)
+
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+
+
+# # user manager
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.query.get(int(user_id))
+
+
+# # render home page
+# @ app.route('/')
+# def home():
+#     title = 'AgriBot - Home'
+#     return render_template('index.html', title=title)
+
+
+# # render crop recommendation form page
+# @ app.route('/crop-recommend')
+# @login_required
+# def crop_recommend():
+#     if not current_user.is_authenticated:
+#         return redirect(url_for('login'))
+
+#     title = 'AgriBot - Crop Recommendation'
+#     return render_template('crop.html', title=title)
+
+
+# # render fertilizer recommendation form page
+# @ app.route('/fertilizer')
+# @login_required
+# def fertilizer_recommendation():
+#     if not current_user.is_authenticated:
+#         return redirect(url_for('login'))
+
+#     title = 'AgriBot - Fertilizer Suggestion'
+#     return render_template('fertilizer.html', title=title)
+
+
+# # render get_started page
+# @app.route('/get_started')
+# def get_started():
+#     return render_template('auth.html')
+
+# # render disease prediction input page
+
+
+# # =============================================================================================================================
+# # -------------------------AUTHENTICATION Classes-----------------------------------------------------------------------------
+
+# # Define User model
+# class User(db.Model, UserMixin):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(20), nullable=False, unique=True)
+#     password = db.Column(db.String(100), nullable=False)
+
+# # Define Registration Form
+# class RegisterForm(FlaskForm):
+#     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+#     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+#     submit = SubmitField("Register")
+
+#     def validate_username(self, username):
+#         existing_user = User.query.filter_by(username=username.data).first()
+#         if existing_user:
+#             raise ValidationError("That username already exists. Please choose a different one.")
+
+# # Login Form
+# class LoginForm(FlaskForm):
+#     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+#     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+#     submit = SubmitField("Login")
+    
+
+# # ============================================================================================================================
+# # ----------------------AUTHENTICATION Functions------------------------------------------------------------------------------
+
+
+# # render auth page
+# @ app.route('/auth')
+# def auth():
+#     title = 'AgriBot - Get Started'
+#     return render_template('auth.html', title=title)
+
+
+# # render register page
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     title = 'AgriBot - Register'
+#     form = RegisterForm()
+#     if form.validate_on_submit():
+#         hashed_password = generate_password_hash(form.password.data, method='sha256')
+#         new_user = User(username=form.username.data, password=hashed_password)
+#         db.session.add(new_user)
+#         db.session.commit()
+#         return redirect(url_for('home'))
+#     return render_template('register.html', form=form, title=title)
+
+
+# # render login page
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     title = 'AgriBot - Login'
+    
+#     if current_user.is_authenticated:  
+#         return redirect(url_for('dashboard'))
+    
+#     form = LoginForm()
+#     just_logged_out = session.pop('just_logged_out', False)
+
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(username=form.username.data).first()
+#         if user and check_password_hash(user.password, form.password.data):
+#             login_user(user)
+#             return redirect(url_for('dashboard'))
+#         else:
+#             return render_template('login.html', form=form, error="Invalid username or password", just_logged_out=just_logged_out)
+
+#     return render_template('login.html', form=form, title=title, just_logged_out=just_logged_out)
+
+
+# # render dashboard page
+# @app.route('/dashboard', methods=['GET', 'POST'])
+# @login_required
+
+# def dashboard():
+#     if not current_user.is_authenticated:
+#         return redirect(url_for('login'))
+
+#     title = 'AgriBot - Dashboard'
+#     return render_template('dashboard.html', title=title)
+
+
+
+# # render logout page
+# @app.route('/logout', methods=['GET', 'POST'])
+# @login_required
+# def logout():
+#     logout_user()
+#     session.pop('just_logged_out', None) 
+
+#     response = make_response(redirect(url_for('login')))
+#     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+#     response.headers['Pragma'] = 'no-cache'
+#     response.headers['Expires'] = '0'
+#     return response
+
+
+
+# # ==========================================================================================================================
+# # -------------------------RENDER PREDICTION PAGES -------------------------------------------------------------------------
+
+# # render chatbot_crop result page
+# @app.route('/recommend', methods=['POST'])
+# def recommend_crop():
+#     data = request.get_json()
+#     input_str = data.get('input', '').strip()
+    
+#     # Validate input format
+#     try:
+#         values = [float(x.strip()) for x in input_str.split(',')]
+#     except ValueError:
+#         return jsonify({'message': 'Input contains non-numeric values. Please enter valid numbers.'}), 400
+
+#     if len(values) != 7:
+#         return jsonify({'message': 'Exactly 7 comma-separated values are required: N, P, K, temperature, humidity, pH, rainfall.'}), 400
+
+#     n, p, k, temp, humidity, ph, rainfall = values
+
+#     # Range checks (customize as needed)
+#     if not (0 <= n <= 500): return jsonify({'message': 'Nitrogen (N) value out of realistic range (0–500).'}), 400
+#     if not (0 <= p <= 500): return jsonify({'message': 'Phosphorus (P) value out of realistic range (0–500).'}), 400
+#     if not (0 <= k <= 500): return jsonify({'message': 'Potassium (K) value out of realistic range (0–500).'}), 400
+#     if not (0 <= temp <= 60): return jsonify({'message': 'Temperature out of range (0–60°C).'}), 400
+#     if not (0 <= humidity <= 100): return jsonify({'message': 'Humidity should be between 0–100%.'}), 400
+#     if not (0 <= ph <= 14): return jsonify({'message': 'pH should be between 0–14.'}), 400
+#     if not (0 <= rainfall <= 1000): return jsonify({'message': 'Rainfall should be within 0–1000 mm.'}), 400
+
+#     try:
+#         prediction = bot_crop_model.predict([values])[0]
+#         return jsonify({'message': 'Recommended Crop: {}'.format(prediction)})
+#     except Exception as e:
+#         return jsonify({'message': 'Model error: {}'.format(str(e))}), 500
+
+
+# # render crop recommendation result page
+# @ app.route('/crop-predict', methods=['POST'])
+# def crop_prediction():
+#     title = 'AgriBot - Crop Recommendation'
+
+#     if request.method == 'POST':
+#         N = int(request.form['nitrogen'])
+#         P = int(request.form['phosphorous'])
+#         K = int(request.form['pottasium'])
+#         ph = float(request.form['ph'])
+#         rainfall = float(request.form['rainfall'])
+
+#         # state = request.form.get("stt")
+#         city = request.form.get("city").strip()
+
+#         if weather_fetch(city) != None:
+#             temperature, humidity = weather_fetch(city)
+#             data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+#             my_prediction = crop_recommendation_model.predict(data)
+#             final_prediction = my_prediction[0]
+
+#             return render_template('crop-result.html', prediction=final_prediction, title=title)
+
+#         else:
+
+#             return render_template('try_again.html', title=title)
+        
+
+# # render fertilizer recommendation result page
+# @ app.route('/fertilizer-predict', methods=['POST'])
+# def fert_recommend():
+#     title = 'AgriBot - Fertilizer Suggestion'
+
+#     crop_name = str(request.form['cropname'])
+#     N = int(request.form['nitrogen'])
+#     P = int(request.form['phosphorous'])
+#     K = int(request.form['pottasium'])
+#     # ph = float(request.form['ph'])
+
+#     df = pd.read_csv('Data/fertilizer.csv')
+
+#     nr = df[df['Crop'] == crop_name]['N'].iloc[0]
+#     pr = df[df['Crop'] == crop_name]['P'].iloc[0]
+#     kr = df[df['Crop'] == crop_name]['K'].iloc[0]
+
+#     n = nr - N
+#     p = pr - P
+#     k = kr - K
+#     temp = {abs(n): "N", abs(p): "P", abs(k): "K"}
+#     max_value = temp[max(temp.keys())]
+#     if max_value == "N":
+#         if n < 0:
+#             key = 'NHigh'
+#         else:
+#             key = "Nlow"
+#     elif max_value == "P":
+#         if p < 0:
+#             key = 'PHigh'
+#         else:
+#             key = "Plow"
+#     else:
+#         if k < 0:
+#             key = 'KHigh'
+#         else:
+#             key = "Klow"
+
+#     response = Markup(str(fertilizer_dic[key]))
+
+#     return render_template('fertilizer-result.html', recommendation=response, title=title)
+
+
+# # render disease prediction result page
+# @app.route('/disease-prediction', methods=['GET', 'POST'])
+# @login_required
+# def disease_prediction():
+#     if not current_user.is_authenticated:
+#         return redirect(url_for('login'))
+
+#     title = 'AgriBot - Disease Detection'
+
+#     if request.method == 'POST':
+#         if 'file' not in request.files:
+#             error = 'No file part in the request.'
+#             return render_template('disease.html', title=title, error=error)
+#         file = request.files.get('file')
+#         if not file or file.filename == '':
+#             error = 'No file selected.'
+#             return render_template('disease.html', title=title, error=error)
+#         try:
+#             img = file.read()
+#             if not img:
+#                 error = 'Uploaded file is empty.'
+#                 return render_template('disease.html', title=title, error=error)
+
+#             prediction = predict_image(img)
+#             prediction = Markup(str(disease_dic[prediction]))
+#             return render_template('disease-result.html', prediction=prediction, title=title)
+#         except Exception as e:
+#             error = 'Error processing image. Please upload a valid image file.'
+#             return render_template('disease.html', title=title, error=error)
+#     return render_template('disease.html', title=title)
+
+
+# # ==========================================================================================================================
+# # -------------------------START APPLICATION -------------------------------------------------------------------------------
+
+# if __name__ == '__main__':
+#     m_service.launch()
+#     with app.app_context():
+#         db.create_all()
+#     app.run(debug=True)
+     
+
+
+
+
+
+     # Basic
 from flask import Flask, render_template, Markup, request, jsonify,  redirect, url_for, session,  make_response
 import numpy as np
 import pandas as pd
